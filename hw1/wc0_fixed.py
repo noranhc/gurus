@@ -1,18 +1,20 @@
 #!/usr/bin/env python3 -B
 """Word frequency counter - the messy version"""
 
-def count_words(file="essay.txt"):
-  """One big function doing everything"""
-  # VIOLATION 1: Load entire file
+"""
+AQ2: Single Responsibility Principle (SRP)
+Divided the big function into smaller functions load_file, print_header, get_words, and print_results
+"""
+def load_file(file):
   with open(file) as f:
-    text = f.read()
+    return f.read()
   
-  # VIOLATION 2: Print mixed with processing
+def print_header(file):
   print(f"\n{'='*50}")
   print(f"WORD FREQUENCY ANALYSIS - {file}")
   print(f"{'='*50}\n")
-  
-  # VIOLATION 3: Clean and count inline (hardcoded logic)
+
+def get_words(text):
   words = text.lower().split()
   counts = {}
   stopwords = ["the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for",
@@ -24,9 +26,11 @@ def count_words(file="essay.txt"):
     if word and word not in stopwords:  # Hardcoded stopwords
       counts[word] = counts.get(word, 0) + 1
   
+  return counts
+
+def print_results(counts, top_n):
   # VIOLATION 4: Sort and filter inline
   sorted_words = sorted(counts.items(), key=lambda x: x[1], reverse=True)
-  top_n = 10  # Hardcoded!
   
   # VIOLATION 5: Print results mixed with computation
   print(f"Total words (after removing stopwords): {sum(counts.values())}")
@@ -39,5 +43,16 @@ def count_words(file="essay.txt"):
     print(f"{i:2}. {word:15} {count:3} {bar}")
   
   print()
+
+# Main function coordinating the workflow
+def count_words(file="essay.txt"):
+
+  text = load_file(file)
+
+  print_header(file)
+  
+  counts = get_words(text)
+  
+  print_results(counts, 10)
 
 count_words("essay.txt")
