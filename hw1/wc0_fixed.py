@@ -16,13 +16,17 @@ Divided the big function into smaller functions
 def load_file(file):
   with open(file) as f:
     return f.read()
+  
+# Load stopwords
+def load_stopwords(file):
+  with open(file) as f:
+    return set(line.strip() for line in f)
 
 # Process text to get word counts
 def get_counts(text):
   words = text.lower().split()
   counts = {}
-  stopwords = ["the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for",
-               "of", "is", "was", "are", "were", "be", "been", "with"]  # Hardcoded!
+  stopwords = load_stopwords("stopwords.txt")
   for word in words:
     # Hardcoded punctuation removal
     word = word.strip('.,!?;:"()[]')
