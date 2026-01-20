@@ -16,11 +16,25 @@ Divided the big function into smaller functions
 def load_file(file):
   with open(file) as f:
     return f.read()
-  
+
 # Load stopwords
 def load_stopwords(file):
   with open(file) as f:
     return set(line.strip() for line in f)
+
+# Q4: Small Functions violation:
+#     get_counts() performs multiple steps (cleaning + filtering + counting).
+# AQ4: Fix (step 1):
+#     Extract word cleaning into a small obvious function.
+def clean_word(word):
+  return word.strip('.,!?;:"()[]')
+
+# Q4: Small Functions violation:
+#     get_counts() performs multiple steps (cleaning + filtering + counting).
+# AQ4: Fix (step 2):
+#     Extract filtering into a small obvious function.
+def valid_word(word, stopwords):
+  return bool(word) and word not in stopwords
 
 # Process text to get word counts
 def get_counts(text):
@@ -29,8 +43,8 @@ def get_counts(text):
   stopwords = load_stopwords("stopwords.txt")
   for word in words:
     # Hardcoded punctuation removal
-    word = word.strip('.,!?;:"()[]')
-    if word and word not in stopwords:  # Hardcoded stopwords
+    word = clean_word(word)
+    if valid_word(word, stopwords):  # Hardcoded stopwords
       counts[word] = counts.get(word, 0) + 1
   return counts
 
