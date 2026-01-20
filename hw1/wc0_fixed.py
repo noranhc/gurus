@@ -11,14 +11,14 @@ Divided the big function into smaller functions
 
 AQ3: Mechanism vs Policy
 Previously, punctuation and stopword rules were hardcoded
-inside the counting mechanism. 
-The test rules were extraded into CONFIG and passed into 
-pure functions. 
+inside the counting mechanism.
+The test rules were extraded into CONFIG and passed into
+pure functions.
 """
 
 CONFIG = {
   "input_file": "essay.txt",
-  "stopwards_file": "stopwords.txt",
+  "stopwords_file": "stopwords.txt",
   "punctuation": '.,!?;:"()[]',
   "top_n": 10,
   "bar_char": "*",
@@ -31,13 +31,13 @@ CONFIG = {
 def load_file(file):
   with open(file) as f:
     return f.read()
-  
+
 # Load stopwords
 def load_stopwords(file):
   with open(file) as f:
     return set(line.strip() for line in f)
 
-# Normalize casing 
+# Normalize casing
 def normalize(text):
   return text.lower()
 
@@ -58,7 +58,7 @@ def get_counts(words, stopwords, punctuation):
     w = clean_word(w, punctuation)
     if w and w not in stopwords:
       counts[w] = counts.get(w, 0) + 1
-    
+
   return counts
 
 # Sorts list based on counts
