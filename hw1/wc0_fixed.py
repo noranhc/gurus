@@ -79,23 +79,22 @@ def print_header(file):
 
 # Print statistics about words
 def print_stats(counts):
-  # VIOLATION 5: Print results mixed with computation
   print(f"Total words (after removing stopwords): {total_words(counts)}")
   print(f"Unique words: {len(counts)}\n")
 
 # Print the top N words
-def print_top_n_words(sorted_words, top_n):
+def print_top_n_words(sorted_words, top_n, bar_char, width):
   print(f"Top {top_n} most frequent words:\n")
 
   # VIOLATION 6: Hardcoded formatting
   for i, (word, count) in enumerate(sorted_words[:top_n], 1):
-    bar = "*" * count
-    print(f"{i:2}. {word:15} {count:3} {bar}")
+    bar = bar_char * count
+    print(f"{i:2}. {word:{width}} {count:3} {bar}")
 
 # Main function coordinating the workflow
 def main():
   text = load_file(CONFIG["input_file"])
-  stopwords = load_stopwords(CONFIG["stopwards_file"])
+  stopwords = load_stopwords(CONFIG["stopwords_file"])
 
   text = normalize(text)
   words = tokenize(text)
@@ -104,7 +103,7 @@ def main():
 
   print_header(CONFIG["input_file"])
   print_stats(counts)
-  print_top_n_words(sorted_words, CONFIG["top_n"])
+  print_top_n_words(sorted_words, CONFIG["top_n"], CONFIG["bar_char"], CONFIG["word_width"])
   print()
 
 # Entry point
