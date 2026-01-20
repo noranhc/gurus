@@ -8,7 +8,22 @@ Separated the code into Model and Presentation layers.
 AQ2: Single Responsibility Principle (SRP)
 Divided the big function into smaller functions
 < 10 lines of code each and responsible for a single task.
+
+AQ3: Mechanism vs Policy
+Previously, punctuation and stopword rules were hardcoded
+inside the counting mechanism.
+The test rules were extraded into CONFIG and passed into
+pure functions.
 """
+
+CONFIG = {
+  "input_file": "essay.txt",
+  "stopwords_file": "stopwords.txt",
+  "punctuation": '.,!?;:"()[]',
+  "top_n": 10,
+  "bar_char": "*",
+  "word_width": 15
+}
 
 #--- MODEL LAYER (Pure business logic, no I/O) ---
 
@@ -37,8 +52,8 @@ def valid_word(word, stopwords):
   return bool(word) and word not in stopwords
 
 # Process text to get word counts
-def get_counts(text):
-  words = text.lower().split()
+# Returns a list of words and their frequencies
+def get_counts(words, stopwords, punctuation):
   counts = {}
   stopwords = load_stopwords("stopwords.txt")
   for word in words:
@@ -47,6 +62,14 @@ def get_counts(text):
     if valid_word(word, stopwords):  # Hardcoded stopwords
       counts[word] = counts.get(word, 0) + 1
   return counts
+
+# Sorts list based on counts
+def sort_counts(counts):
+  return sorted(counts.items(), key=lambda x: x[1], reverse=True)
+
+# Returns the total number of words in text
+def total_words(counts):
+  return sum(counts.values())
 
 #--- PRESENTATION LAYER (I/O only, no logic) ---
 
@@ -57,31 +80,34 @@ def print_header(file):
   print(f"{'='*50}\n")
 
 # Print statistics about words
-def print_stats(counts, n, top_n):
-  # VIOLATION 5: Print results mixed with computation
-  print(f"Total words (after removing stopwords): {n}")
+def print_stats(counts):
+  print(f"Total words (after removing stopwords): {total_words(counts)}")
   print(f"Unique words: {len(counts)}\n")
 
 # Print the top N words
-def print_top_n_words(sorted_words, top_n):
+def print_top_n_words(sorted_words, top_n, bar_char, width):
   print(f"Top {top_n} most frequent words:\n")
 
   # VIOLATION 6: Hardcoded formatting
   for i, (word, count) in enumerate(sorted_words[:top_n], 1):
-    bar = "*" * count
-    print(f"{i:2}. {word:15} {count:3} {bar}")
+    bar = bar_char * count
+    print(f"{i:2}. {word:{width}} {count:3} {bar}")
 
 # Main function coordinating the workflow
-def count_words(file="essay.txt"):
-  text = load_file(file)
-  counts = get_counts(text)
-  n = sum(counts.values())
-  sorted_words = sorted(counts.items(), key=lambda x: x[1], reverse=True)
-  top_n = 10  # Hardcoded!
+def main():
+  text = load_file(CONFIG["input_file"])
+  stopwords = load_stopwords(CONFIG["stopwords_file"])
 
-  print_header(file)
-  print_stats(counts, n, top_n)
-  print_top_n_words(sorted_words, top_n)
+  text = normalize(text)
+  words = tokenize(text)
+  counts = get_counts(words, stopwords, CONFIG["punctuation"])
+  sorted_words = sort_counts(counts)
+
+  print_header(CONFIG["input_file"])
+  print_stats(counts)
+  print_top_n_words(sorted_words, CONFIG["top_n"], CONFIG["bar_char"], CONFIG["word_width"])
   print()
 
-count_words("essay.txt")
+# Entry point
+if __name__ == "__main__":
+  main()
