@@ -13,10 +13,8 @@ Divided the big function into smaller functions
 < 10 lines of code each and responsible for a single task.
 
 AQ3: Mechanism vs Policy
-Previously, punctuation and stopword rules were hardcoded
-inside the counting mechanism.
-The test rules were extraded into CONFIG and passed into
-pure functions.
+Hardcode punctuation and stopword rules were were moved
+into CONFIG and passed into pure functions.
 """
 
 CONFIG = {
@@ -52,12 +50,12 @@ def load_stopwords(file):
   with open(file) as f:
     return set(line.strip() for line in f)
 
-# Process text: lowercasing and splitting
+# Process text to get list of words
 def process_text(text):
   text = text.lower()
   return text.split()
 
-# Process text to get word counts
+# Process words to get counts
 def get_counts(words, stopwords, punctuation):
   counts = {}
   for word in words:
