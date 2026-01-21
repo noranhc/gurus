@@ -1,4 +1,8 @@
+import json
+import wc0_fixed as wc
+
 """
+Bonus Task 3
 Unit tests for wc0_fixed.py
 
 These tests verify that all model functions are:
@@ -8,13 +12,17 @@ These tests verify that all model functions are:
 
 """
 
-import wc0_fixed as wc
-
-
 def test_clean_word():
     assert wc.clean_word("hello,", ".,") == "hello"
     assert wc.clean_word("world!", "!") == "world"
     assert wc.clean_word("clean", ".,") == "clean"
+
+
+def test_valid_word():
+    stopwords = {"the", "and"}
+    assert wc.valid_word("cat", stopwords)
+    assert not wc.valid_word("the", stopwords)
+    assert not wc.valid_word("", stopwords)
 
 
 def test_normalize():
@@ -55,3 +63,26 @@ def test_sort_counts():
 def test_total_words():
     counts = {"a": 2, "b": 3}
     assert wc.total_words(counts) == 5
+
+
+def test_toJSON():
+    result = {
+        "total": 3,
+        "unique": 2,
+        "counts": {"a": 2, "b": 1},
+        "top": [("a", 2), ("b", 1)]
+    }
+    data = json.loads(wc.toJSON(result))
+    assert data["total"] == 3
+    assert data["counts"]["a"] == 2
+
+
+def test_toCSV():
+    result = {
+        "top": [("hello", 2), ("world", 1)]
+    }
+    csv_text = wc.toCSV(result)
+    lines = csv_text.strip().splitlines()
+    assert lines[0] == "word,count"
+    assert "hello,2" in lines
+    assert "world,1" in lines

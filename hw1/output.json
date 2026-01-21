@@ -1,0 +1,114 @@
+{
+  "total": 99,
+  "unique": 66,
+  "counts": {
+    "quick": 2,
+    "brown": 1,
+    "fox": 2,
+    "jumps": 1,
+    "over": 1,
+    "lazy": 2,
+    "dog": 2,
+    "very": 3,
+    "software": 5,
+    "engineering": 2,
+    "principle": 3,
+    "separation": 4,
+    "concerns": 5,
+    "important": 1,
+    "states": 1,
+    "that": 2,
+    "should": 1,
+    "organized": 1,
+    "so": 1,
+    "each": 1,
+    "part": 1,
+    "addresses": 1,
+    "separate": 2,
+    "concern": 1,
+    "when": 1,
+    "we": 2,
+    "make": 2,
+    "easier": 2,
+    "maintain": 1,
+    "understand": 1,
+    "fundamental": 1,
+    "good": 2,
+    "design": 2,
+    "many": 1,
+    "patterns": 1,
+    "exist": 1,
+    "help": 1,
+    "example": 2,
+    "model-view-controller": 1,
+    "pattern": 1,
+    "separates": 1,
+    "data": 1,
+    "model": 1,
+    "from": 2,
+    "user": 1,
+    "interface": 1,
+    "control": 1,
+    "logic": 3,
+    "another": 1,
+    "business": 1,
+    "presentation": 1,
+    "these": 1,
+    "separations": 1,
+    "code": 1,
+    "more": 2,
+    "modular": 1,
+    "testable": 1,
+    "practices": 1,
+    "always": 1,
+    "emphasize": 1,
+    "importance": 1,
+    "separating": 1,
+    "different": 2,
+    "into": 1,
+    "modules": 1,
+    "components": 1
+  },
+  "top": [
+    [
+      "software",
+      5
+    ],
+    [
+      "concerns",
+      5
+    ],
+    [
+      "separation",
+      4
+    ],
+    [
+      "very",
+      3
+    ],
+    [
+      "principle",
+      3
+    ],
+    [
+      "logic",
+      3
+    ],
+    [
+      "quick",
+      2
+    ],
+    [
+      "fox",
+      2
+    ],
+    [
+      "lazy",
+      2
+    ],
+    [
+      "dog",
+      2
+    ]
+  ]
+}
