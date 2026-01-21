@@ -26,6 +26,7 @@ CONFIG = {
   "language": "english", # english | spanish (bonus 4)
   "stopwords_file": { # 2D list that requires language as key to access file (bonus 4)
       "english": "stopwords.txt",
+      "complete": "stopwords_complete.txt",
       "spanish": "stopwords_es.txt"
   },
   "output_format": "csv", # json | csv (bonus 1)
