@@ -13,12 +13,9 @@ Divided the big function into smaller functions
 < 10 lines of code each and responsible for a single task.
 
 AQ3: Mechanism vs Policy
-Previously, punctuation and stopword rules were hardcoded
-inside the counting mechanism.
-The test rules were extraded into CONFIG and passed into
-pure functions.
+Hardcode punctuation and stopword rules were were moved
+into CONFIG and passed into pure functions.
 """
-
 
 CONFIG = {
   "input_file": "essay.txt",
@@ -29,6 +26,7 @@ CONFIG = {
   "language": "english", # english | spanish (bonus 4)
   "stopwords_file": { # 2D list that requires language as key to access file (bonus 4)
       "english": "stopwords.txt",
+      "complete": "stopwords_complete.txt",
       "spanish": "stopwords_es.txt"
   },
   "output_format": "csv", # json | csv (bonus 1)
@@ -53,36 +51,17 @@ def load_stopwords(file):
   with open(file) as f:
     return set(line.strip() for line in f)
 
-# Normalize casing
-def normalize(text):
-  return text.lower()
-
-# Split text into words
-def tokenize(text):
+# Process text to get list of words
+def process_text(text):
+  text = text.lower()
   return text.split()
 
-# Q4: Small Functions violation:
-#     get_counts() performs multiple steps (cleaning + filtering + counting).
-# AQ4: Fix (step 1):
-#     Extract word cleaning into a small obvious function.
-def clean_word(word, punctuation):
-  return word.strip(punctuation)
-
-# Q4: Small Functions violation:
-#     get_counts() performs multiple steps (cleaning + filtering + counting).
-# AQ4: Fix (step 2):
-#     Extract filtering into a small obvious function.
-def valid_word(word, stopwords):
-  return bool(word) and word not in stopwords
-
-# Process text to get word counts
-# Returns a list of words and their frequencies
+# Process words to get counts
 def get_counts(words, stopwords, punctuation):
   counts = {}
   for word in words:
-    # Hardcoded punctuation removal
-    word = clean_word(word, punctuation)
-    if valid_word(word, stopwords):  # Hardcoded stopwords
+    word = word.strip(punctuation)
+    if bool(word) and word not in stopwords:
       counts[word] = counts.get(word, 0) + 1
   return counts
 
@@ -147,16 +126,7 @@ def build_result(counts, sorted_words, top_n):
     "top": sorted_words[:top_n]
   }
 
-# Main function coordinating the workflow
-def main():
-  text = load_file(CONFIG["input_file"])
-  stopwords = load_stopwords(CONFIG["stopwords_file"][CONFIG["language"]])
-
-  text = normalize(text)
-  words = tokenize(text)
-  counts = get_counts(words, stopwords, CONFIG["punctuation"])
-  sorted_words = sort_counts(counts)
-
+def output_result(counts, sorted_words):
   print_header(CONFIG["input_file"])
   print_stats(counts)
   print_top_n_words(sorted_words, CONFIG["top_n"], CONFIG["bar_char"], CONFIG["word_width"])
@@ -164,6 +134,17 @@ def main():
 
   result = build_result(counts, sorted_words, CONFIG["top_n"])
   write_bonus_output(result)
+
+# Main function coordinating the workflow
+def main():
+  text = load_file(CONFIG["input_file"])
+  stopwords = load_stopwords(CONFIG["stopwords_file"][CONFIG["language"]])
+
+  words = process_text(text)
+  counts = get_counts(words, stopwords, CONFIG["punctuation"])
+  sorted_words = sort_counts(counts)
+
+  output_result(counts, sorted_words)
 
 # Entry point
 if __name__ == "__main__":
