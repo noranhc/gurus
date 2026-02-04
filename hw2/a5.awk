@@ -1,27 +1,28 @@
 # A5.awk
-# Prints rows 1–10 (after header).
-# For rows 11+, prints only rows where column 3 is NOT "?".
-# Uses `next` as required by the assignment.
-# CSV contains spaces after commas, so FS trims whitespace.
+# Print rows 1–10 of the dataset (after the header).
+# For rows 11+, print only rows where column 3 is NOT "?".
+# Uses `next` as required.
 
 BEGIN {
-    FS = " *, *"   # comma with optional surrounding spaces
+    FS = " *, *"          # comma with optional surrounding spaces
 }
 
 NR == 1 {
-    print          # print header
+    print                 # print header row
     next
 }
 
 {
-    data++         # count data rows (excluding header)
+    data++                # count data rows (excluding header)
 }
 
+# Always print the first 10 data rows
 data <= 10 {
-    print          # always print first 10 data rows
-    next           # do not check conditions below
+    print
+    next                  # do not process further conditions
 }
 
-$3 != "?" {
-    print          # rows 11+ where column 3 is not "?"
+# For rows after the first 10, print only if column 3 is not "?"
+data > 10 && $3 != "?" {
+    print
 }
