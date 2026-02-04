@@ -1,0 +1,36 @@
+B1 Answer:
+In Python, the class Obj(dict) creates a dictionary to store data, and
+__getattr__ is used to access entries using dot notation. In Lua, isa()
+creates a table object and attaches a metatable to it. The metatable uses
+__index to look up entries. If an entry is not found in the table, Lua looks
+in the class table. This allows Lua to provide dot-notation access similar
+to Python.
+
+B2 Answer:
+In the function NUM.add(i,v,    d), "i" represents the NUM object itself, and
+the variable "v" is the numeric value being added to the NUM object (i). This is
+similar to Python, where "i" would be "self" and v would be a float variable
+that it being added.
+Python Equivalent with type hints:   def add(self: NUM, v: float)
+
+B3 Answer:
+In Lua, sd is stored in memory, and i.sd^2 uses the value that was stored.
+Whereas in Python, sd is not stored and is computed from m2. This ensures that
+the value of sd is always correct and reflects the most recent update, but
+it is slower than Lua.
+I would still prefer Python's design over Lua simply because I wouldn't have to
+worry about the value sd being correct after every change. Lua is faster, but
+I would prefer accuracy over speed.
+
+B4 Answer:
+This statement return {the=the, SYM=SYM, NUM=NUM, ...} in Lua exports the values
+that the user wants to make accessible to other files. It returns a table
+containing those values. This is similar to using "import nb" in Python, where
+all global values in the module are automatically available after import.
+
+B5 Answer:
+In Python, the enumerate() helper function is used to get both the index and
+the value when looping over rows. In Lua, the for-loop in nb() uses
+iter(items), which returns each row directly without an index. Unlike Python,
+Lua does not need a separate enumerate() function because Lua for-loops can
+receive multiple return values directly from an iterator when needed.
