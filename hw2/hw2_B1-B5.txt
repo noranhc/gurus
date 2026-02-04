@@ -29,8 +29,12 @@ containing those values. This is similar to using "import nb" in Python, where
 all global values in the module are automatically available after import.
 
 B5 Answer:
-In Python, the enumerate() helper function is used to get both the index and
-the value when looping over rows. In Lua, the for-loop in nb() uses
-iter(items), which returns each row directly without an index. Unlike Python,
-Lua does not need a separate enumerate() function because Lua for-loops can
-receive multiple return values directly from an iterator when needed.
+In Python, enumerate(rows) is used to return both the index and the row value
+while looping. In Lua, this behavior is built into the language through iterators
+such as pairs() and ipairs(), which allow loops like "for i, v in ipairs(t) do"
+to receive both the index and the value. In nb.lua,
+this capability is visible in several places (e.g., loops using pairs()), but in
+the nb() function the loop uses iter(items) with for row in iter(items) do
+because only the row value is needed, not the index.
+Unlike Python, Lua does not require a separate enumerate() helper since its
+iterators can naturally return multiple values when needed.
