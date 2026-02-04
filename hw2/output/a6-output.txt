@@ -1,0 +1,24 @@
+Class distribution entropy: 2.6586
+
+Class counts:
+ powdery-mildew: 20
+ diaporthe-pod-&-stem-blight: 15
+ cyst-nematode: 14
+ phytophthora-rot: 88
+ frog-eye-leaf-spot: 91
+ diaporthe-stem-canker: 20
+ phyllosticta-leaf-spot: 20
+ charcoal-rot: 20
+ downy-mildew: 20
+ rhizoctonia-root-rot: 20
+ 2-4-d-injury: 16
+ purple-seed-stain: 20
+ herbicide-injury: 8
+ brown-stem-rot: 44
+ bacterial-blight: 20
+ brown-spot: 92
+ alternarialeaf-spot: 91
+ anthracnose: 44
+ bacterial-pustule: 20
+
+Total rows: 683
