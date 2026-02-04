@@ -19,16 +19,3 @@ function inject(t, acc, f)
   end
   return acc
 end
-
--- Tests
--- C3: Test reject()
-print("reject test: filter out even numbers from {1,2,3,4,5}")
-local result = reject({1,2,3,4,5}, function(x) return x%2==0 end)
-print("{" .. table.concat(result, ",") .. "}") --> {1,3,5}
-
--- C4: Test inject()
-print("\ninject test: sum of {1,2,3,4}")
-print(inject({1,2,3,4}, 0, function(a,x) return a+x end))  --> 10
-
-print("\ninject test: product of {1,2,3,4}")
-print(inject({1,2,3,4}, 1, function(a,x) return a*x end))  --> 24
