@@ -37,10 +37,12 @@ sh: banner ## run my shell
 push: ## save to cloud
 	@read -p "Reason? " msg; git commit -am "$$msg"; git push; git status
 
-~/tmp/%.html: %.py ~/tmp Makefile
+~/tmp/pycco.css: ~/tmp
+	@grep -q 'p {text-align: right}' $@ 2>/dev/null || echo 'p {text-align: right}' >> $@
+
+~/tmp/%.html: %.py ~/tmp/pycco.css Makefile
 	mkdir -p ~/tmp
 	pycco -d ~/tmp $<
-	echo 'p {text-align: right}' >> ~/tmp/pycco.css
 
 ~/tmp:
 	mkdir -p ~/tmp
