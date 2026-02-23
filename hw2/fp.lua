@@ -1,5 +1,5 @@
 -- C1: collect(t, f) — return a new table with f applied to each element.
-function collect(t, f) 
+function collect(t, f)
     local result = {}
     for i, v in ipairs(t) do
         result[#result + 1] = f(v)
