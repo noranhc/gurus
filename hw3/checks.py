@@ -1,4 +1,5 @@
-import csv, sys
+import csv
+import sys
 
 MISSING = '?'
 
@@ -13,10 +14,14 @@ def check_D(path):
     for r in rows:
         if any(r[c] == MISSING for c in needed):
             continue
-        h = float(r['HEIGHT']); l = float(r['LENGHT'])
-        a = float(r['AREA']);   e = float(r['ECCEN'])
-        pb = float(r['P_BLACK']); pa = float(r['P_AND'])
-        bpx = float(r['BLACKPIX']); ba = float(r['BLACKAND'])
+        h = float(r['HEIGHT'])
+        l = float(r['LENGHT'])
+        a = float(r['AREA'])
+        e = float(r['ECCEN'])
+        pb = float(r['P_BLACK'])
+        pa = float(r['P_AND'])
+        bpx = float(r['BLACKPIX'])
+        ba = float(r['BLACKAND'])
 
         if a != h * l:
             bad_cols.update(['AREA', 'HEIGHT', 'LENGHT'])
