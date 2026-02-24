@@ -3,76 +3,113 @@ import sys
 
 MISSING = '?'
 
-def check_D(path):
-    """Columns in ≥1 violated referential integrity."""
-    with open(path) as f:
-        rows = list(csv.DictReader(f))
+# QD. Features with conflicting values
+# Columns involved in ≥1 violated referential integrity constraint.
+# Checks: AREA=H*L, ECCEN=L/H (tol 0.01),
+# P_BLACK=BLACKPIX/AREA, P_AND=BLACKAND/AREA (tol 0.001).
 
+INTEGRITY_FIELDS = [
+    'HEIGHT','LENGHT','AREA','ECCEN',
+    'P_BLACK','P_AND','BLACKPIX','BLACKAND'
+]
+
+def has_missing(row, fields):
+    return any(row[c] == MISSING for c in fields)
+
+def integrity_violations(row):
+    h  = float(row['HEIGHT'])
+    l  = float(row['LENGHT'])
+    a  = float(row['AREA'])
+    e  = float(row['ECCEN'])
+    pb = float(row['P_BLACK'])
+    pa = float(row['P_AND'])
+    bpx = float(row['BLACKPIX'])
+    ba = float(row['BLACKAND'])
+
+    cols = set()
+    if a != h * l:
+        cols.update(['AREA', 'HEIGHT', 'LENGHT'])
+    if h > 0 and abs(e - l / h) > 0.01:
+        cols.update(['ECCEN', 'LENGHT', 'HEIGHT'])
+    if a > 0 and abs(pb - bpx / a) > 0.001:
+        cols.update(['P_BLACK', 'BLACKPIX', 'AREA'])
+    if a > 0 and abs(pa - ba / a) > 0.001:
+        cols.update(['P_AND', 'BLACKAND', 'AREA'])
+    return cols
+
+def find_conflicting_features(rows):
     bad_cols = set()
-    needed = ['HEIGHT','LENGHT','AREA','ECCEN','P_BLACK','P_AND','BLACKPIX','BLACKAND']
-
     for r in rows:
-        if any(r[c] == MISSING for c in needed):
+        if has_missing(r, INTEGRITY_FIELDS):
             continue
-        h = float(r['HEIGHT'])
-        l = float(r['LENGHT'])
-        a = float(r['AREA'])
-        e = float(r['ECCEN'])
-        pb = float(r['P_BLACK'])
-        pa = float(r['P_AND'])
-        bpx = float(r['BLACKPIX'])
-        ba = float(r['BLACKAND'])
+        bad_cols.update(integrity_violations(r))
+    return sorted(bad_cols)
 
-        if a != h * l:
-            bad_cols.update(['AREA', 'HEIGHT', 'LENGHT'])
-        if h > 0 and abs(e - l / h) > 0.01:
-            bad_cols.update(['ECCEN', 'LENGHT', 'HEIGHT'])
-        if a > 0 and abs(pb - bpx / a) > 0.001:
-            bad_cols.update(['P_BLACK', 'BLACKPIX', 'AREA'])
-        if a > 0 and abs(pa - ba / a) > 0.001:
-            bad_cols.update(['P_AND', 'BLACKAND', 'AREA'])
-
-    print(len(bad_cols))
-    for c in sorted(bad_cols):
-        print(c)
-
-def check_E(path):
-    """Columns with ≥1 plausibility violation."""
-    with open(path) as f:
+def check_d(filename):
+    with open(filename) as f:
         rows = list(csv.DictReader(f))
+    bad_cols = find_conflicting_features(rows)
+    print_check_d_results(bad_cols)
 
-    bad_cols = set()
+# QE. Features with implausible values
+# Columns with ≥1 value violating a plausibility constraint.
+# Checks: positive values, proportions in [0,1],
+# BLACKPIX <= BLACKAND, class! in {1..5}.
 
-    pos_cols = ['HEIGHT','LENGHT','WIDTH','AREA','BLACKPIX','BLACKAND','WB_TRANS','MEAN_TR','ECCEN']
-    prop_cols = ['P_BLACK', 'P_AND']
+POS_COLS = [
+    'HEIGHT','LENGHT','WIDTH','AREA',
+    'BLACKPIX','BLACKAND','WB_TRANS','MEAN_TR','ECCEN'
+]
+PROP_COLS = ['P_BLACK', 'P_AND']
+VALID_CLASSES = {'1','2','3','4','5'}
 
-    for r in rows:
-        for c in pos_cols:
-            if r[c] == MISSING:
-                continue
-            if float(r[c]) <= 0:
-                bad_cols.add(c)
-
-        for c in prop_cols:
-            if r[c] == MISSING:
-                continue
-            v = float(r[c])
+def plausibility_violations(row):
+    cols = set()
+    for c in POS_COLS:
+        if row[c] != MISSING and float(row[c]) <= 0:
+            cols.add(c)
+    for c in PROP_COLS:
+        if row[c] != MISSING:
+            v = float(row[c])
             if v < 0 or v > 1:
-                bad_cols.add(c)
+                cols.add(c)
+    if (row['BLACKPIX'] != MISSING
+            and row['BLACKAND'] != MISSING
+            and float(row['BLACKPIX']) > float(row['BLACKAND'])):
+        cols.update(['BLACKPIX', 'BLACKAND'])
+    cls = row['class!']
+    if cls == MISSING or cls.strip() not in VALID_CLASSES:
+        cols.add('class!')
+    return cols
 
-        if r['BLACKPIX'] != MISSING and r['BLACKAND'] != MISSING:
-            if float(r['BLACKPIX']) > float(r['BLACKAND']):
-                bad_cols.update(['BLACKPIX', 'BLACKAND'])
+def find_implausible_features(rows):
+    bad_cols = set()
+    for r in rows:
+        bad_cols.update(plausibility_violations(r))
+    return sorted(bad_cols)
 
-        cls = r['class!']
-        if cls == MISSING or cls.strip() not in ('1','2','3','4','5'):
-            bad_cols.add('class!')
+def check_e(filename):
+    with open(filename) as f:
+        rows = list(csv.DictReader(f))
+    bad_cols = find_implausible_features(rows)
+    print_check_e_results(bad_cols)
 
-    print(len(bad_cols))
-    for c in sorted(bad_cols):
-        print(c)
+#--- Presentation Layer ---
+
+def print_results(check, results):
+    print(f'Check {check}')
+    for item in results:
+        print(item)
+
+def print_check_d_results(bad_cols):
+    print_results('D: Conflicting Features', bad_cols)
+
+def print_check_e_results(bad_cols):
+    print_results('E: Implausible Features', bad_cols)
+
+#--- Entry Point ---
 
 if __name__ == '__main__':
-    target = sys.argv[1]
+    target = sys.argv[1].lower()
     path = sys.argv[2]
     globals()[f'check_{target}'](path)
