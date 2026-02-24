@@ -109,7 +109,12 @@ def print_check_e_results(bad_cols):
 
 #--- Entry Point ---
 
+CHECKS = {
+    'd': check_d,
+    'e': check_e,
+}
+
 if __name__ == '__main__':
     target = sys.argv[1].lower()
     path = sys.argv[2]
-    globals()[f'check_{target}'](path)
+    CHECKS[target](path)
