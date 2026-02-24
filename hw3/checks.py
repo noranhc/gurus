@@ -62,25 +62,34 @@ POS_COLS = [
 ]
 PROP_COLS = ['P_BLACK', 'P_AND']
 VALID_CLASSES = {'1','2','3','4','5'}
-
-def plausibility_violations(row):
+def check_positive(row):
     cols = set()
     for c in POS_COLS:
         if row[c] != MISSING and float(row[c]) <= 0:
             cols.add(c)
+    return cols
+
+def check_proportions(row):
+    cols = set()
     for c in PROP_COLS:
         if row[c] != MISSING:
             v = float(row[c])
             if v < 0 or v > 1:
                 cols.add(c)
+    return cols
+
+def check_blackpix_subset(row):
     if (row['BLACKPIX'] != MISSING
             and row['BLACKAND'] != MISSING
             and float(row['BLACKPIX']) > float(row['BLACKAND'])):
-        cols.update(['BLACKPIX', 'BLACKAND'])
-    cls = row['class!']
-    if cls == MISSING or cls.strip() not in VALID_CLASSES:
-        cols.add('class!')
-    return cols
+        return {'BLACKPIX', 'BLACKAND'}
+    return set()
+
+
+def plausibility_violations(row):
+    return (check_positive(row)
+          | check_proportions(row)
+          | check_blackpix_subset(row))
 
 def find_implausible_features(rows):
     bad_cols = set()
