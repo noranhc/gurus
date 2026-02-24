@@ -1,7 +1,20 @@
 import csv
 import sys
+from math import sqrt
 
 MISSING = '?'
+
+#--- Model Layer (Business logic, no I/O) ---
+
+# Shared utilities
+
+def mean(xs):
+    return sum(xs) / len(xs)
+
+def sd(xs):
+    mu = mean(xs)
+    return sqrt(sum((x - mu)**2 for x in xs) / len(xs))
+
 
 # QD. Features with conflicting values
 # Columns involved in ≥1 violated referential integrity constraint.
@@ -103,6 +116,51 @@ def check_e(filename):
     bad_cols = find_implausible_features(rows)
     print_check_e_results(bad_cols)
 
+# QG. Outlier cases
+# Rows containing at least one value more than 3σ from
+# the column mean. Row-level dual of check C.
+
+def column_stats(rows, header):
+    """Compute mean and sd for each numeric column."""
+    stats = {}
+    for col in header:
+        vals = []
+        for r in rows:
+            if r[col] != MISSING:
+                try:
+                    vals.append(float(r[col]))
+                except ValueError:
+                    break
+        else:
+            if vals:
+                stats[col] = (mean(vals), sd(vals))
+    return stats
+
+def is_outlier_row(row, stats):
+    """True if any value is more than 3σ from column mean."""
+    for col, (mu, sigma) in stats.items():
+        if row[col] == MISSING:
+            continue
+        if sigma > 0 and abs(float(row[col]) - mu) > 3 * sigma:
+            return True
+    return False
+
+def find_outlier_cases(rows, header):
+    stats = column_stats(rows, header)
+    bad_rows = []
+    for i, r in enumerate(rows):
+        if is_outlier_row(r, stats):
+            bad_rows.append(i + 2)
+    return bad_rows
+
+def check_g(filename):
+    with open(filename) as f:
+        reader = csv.DictReader(f)
+        header = reader.fieldnames
+        rows = list(reader)
+    bad_rows = find_outlier_cases(rows, header)
+    print_check_g_results(bad_rows)
+
 #--- Presentation Layer ---
 
 def print_results(check, results):
@@ -116,11 +174,15 @@ def print_check_d_results(bad_cols):
 def print_check_e_results(bad_cols):
     print_results('E: Implausible Features', bad_cols)
 
+def print_check_g_results(bad_rows):
+    print_results('G: Outlier Cases', bad_rows)
+
 #--- Entry Point ---
 
 CHECKS = {
     'd': check_d,
     'e': check_e,
+    'g': check_g,
 }
 
 if __name__ == '__main__':
