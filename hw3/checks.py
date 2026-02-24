@@ -65,7 +65,7 @@ def is_numeric_column(data, col_idx):
 def get_numeric_cols(data, header):
     numeric_cols = []
     for i in range(len(header)):
-        if is_numeric_column(data, i):
+        if is_numeric_column(data, i) and not header[i].endswith('!'):
             numeric_cols.append(i)
     return numeric_cols
 
