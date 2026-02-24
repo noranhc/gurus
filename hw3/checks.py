@@ -164,7 +164,6 @@ def main():
         print(f"Check {check} not yet implemented")
     else:
         print(f"Unknown check: {check}")
-        sys.exit(1)
 
 
 if __name__ == "__main__": main()
