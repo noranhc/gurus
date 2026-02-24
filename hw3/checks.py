@@ -145,16 +145,14 @@ def print_check_c_results(outlier_cols):
 
 #--- Program entry point and execution ---
 
-def get_check_function(check_name):
-    checks = {
-        'a': check_a,
-        'b': check_b,
-        'c': check_c
-    }
-    return checks.get(check_name.lower())
+CHECKS = {
+    'a': check_a,
+    'b': check_b,
+    'c': check_c
+}
 
 def run_check(check_name, filename):
-    check_func = get_check_function(check_name)
+    check_func = CHECKS.get(check_name.lower())
     if check_func:
         check_func(filename)
     else:
