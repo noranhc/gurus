@@ -143,7 +143,23 @@ def print_check_b_results(correlated_pairs):
 def print_check_c_results(outlier_cols):
     print_results('C: Outlier Features', outlier_cols)
 
-#--- Program entry point ---
+#--- Program entry point and execution ---
+
+def get_check_function(check_name):
+    checks = {
+        'a': check_a,
+        'b': check_b,
+        'c': check_c
+    }
+    return checks.get(check_name.lower())
+
+def run_check(check_name, filename):
+    check_func = get_check_function(check_name)
+    if check_func:
+        check_func(filename)
+    else:
+        print(f"Unknown check: {check_name}")
+        sys.exit(1)
 
 def main():
     if len(sys.argv) < 3:
@@ -151,19 +167,10 @@ def main():
         print("Example: python3 checks.py A page_blocks_dirty.csv")
         sys.exit(1)
     
-    check = sys.argv[1].upper()
+    check_name = sys.argv[1]
     filename = sys.argv[2]
     
-    if check == 'A':
-        check_a(filename)
-    elif check == 'B':
-        check_b(filename)
-    elif check == 'C':
-        check_c(filename)
-    elif check == 'D':
-        print(f"Check {check} not yet implemented")
-    else:
-        print(f"Unknown check: {check}")
+    run_check(check_name, filename)
 
-
-if __name__ == "__main__": main()
+if __name__ == "__main__":
+    main()
