@@ -282,10 +282,10 @@ def print_results(check, results):
         print(item)
 
 def print_check_a_results(identical_groups):
-    print_results('A: Identical Features', [','.join(group) for group in identical_groups])
+    print_results('A: Identical Feature Groups', [','.join(group) for group in identical_groups])
 
 def print_check_b_results(correlated_pairs):
-    print_results('B: Correlated Features', [f'{col1},{col2}' for col1, col2 in correlated_pairs])
+    print_results('B: Correlated Feature Pairs', [f'{col1},{col2}' for col1, col2 in correlated_pairs])
 
 def print_check_c_results(outlier_cols):
     print_results('C: Outlier Features', outlier_cols)
